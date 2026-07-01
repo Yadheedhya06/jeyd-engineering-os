@@ -1,0 +1,22 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "jeyd-engineering-os",
+  "description": "jeyd's public engineering OS — authored Claude Code skills for an autonomous, fail-closed, adversarial dev-team loop (orchestrate, worker, redteam).",
+  "owner": {
+    "name": "Yadheedhya06 (jeyd)",
+    "email": "yadheedhya6@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "engineering-os",
+      "description": "Authored engineering-lifecycle skills: orchestrate (autonomous dev-team loop), worker (TDD + fail-closed gauntlet), redteam (adversarial merge gate).",
+      "author": {
+        "name": "Yadheedhya06 (jeyd)",
+        "email": "yadheedhya6@gmail.com"
+      },
+      "source": ".",
+      "category": "development",
+      "homepage": "https://github.com/Yadheedhya06/jeyd-engineering-os"
+    }
+  ]
+}

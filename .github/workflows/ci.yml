@@ -1,0 +1,50 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  skills:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: node unit tests (*.test.mjs)
+        shell: bash
+        run: |
+          shopt -s nullglob globstar
+          files=(skills/**/test/*.test.mjs)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "no .test.mjs files yet — skipping"; exit 0
+          fi
+          node --test "${files[@]}"
+
+      - name: bash test suites (*.test.sh)
+        shell: bash
+        run: |
+          shopt -s nullglob globstar
+          suites=(skills/**/test/*.test.sh test/*.test.sh)
+          if [ ${#suites[@]} -eq 0 ]; then
+            echo "no .test.sh suites yet — skipping"; exit 0
+          fi
+          rc=0
+          for f in "${suites[@]}"; do
+            echo "=== $f ==="
+            bash "$f" || rc=1
+          done
+          exit $rc
+
+      - name: shell syntax (bash -n on *.sh)
+        shell: bash
+        run: |
+          shopt -s nullglob globstar
+          scripts=(install.sh skills/**/*.sh test/*.sh)
+          if [ ${#scripts[@]} -eq 0 ]; then
+            echo "no shell scripts — skipping"; exit 0
+          fi
+          rc=0
+          for f in "${scripts[@]}"; do
+            echo "bash -n $f"
+            bash -n "$f" || rc=1
+          done
+          exit $rc

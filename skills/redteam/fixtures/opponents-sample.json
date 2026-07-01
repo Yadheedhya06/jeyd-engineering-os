@@ -1,0 +1,21 @@
+{
+  "decisions": [
+    {
+      "id": "D1",
+      "summary": "use a per-process circuit breaker for Binance egress",
+      "surface": "standard",
+      "severity": "low",
+      "opponents": [ { "refuted": false }, { "refuted": false }, { "refuted": false } ]
+    },
+    {
+      "id": "D2",
+      "summary": "change finalize SQL to skip the fence check",
+      "surface": "elevated",
+      "severity": "critical",
+      "opponents": [
+        { "refuted": false }, { "refuted": false }, { "refuted": false },
+        { "refuted": false }, { "refuted": true }
+      ]
+    }
+  ]
+}

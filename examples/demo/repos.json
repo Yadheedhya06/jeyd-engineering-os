@@ -1,0 +1,59 @@
+{
+  "repos": [
+    {
+      "name": "api",
+      "url": "https://github.com/your-org/api",
+      "defaultBranch": "main",
+      "kind": "node",
+      "gates": ["install", "build", "test"],
+      "services": ["postgres"],
+      "commands": {
+        "install": "npm install",
+        "build": "npm run build",
+        "test": "npm test"
+      },
+      "surfaceTiers": {
+        "elevated": ["migrations/**", "src/db/**", "**/*.contract.ts"]
+      },
+      "contractPin": { "dep": "@your-org/shared", "version": "v1" }
+    },
+    {
+      "name": "engine",
+      "url": "https://github.com/your-org/engine",
+      "defaultBranch": "main",
+      "kind": "rust",
+      "gates": ["fmt", "lint", "build", "test"],
+      "services": [],
+      "commands": {
+        "fmt": "cargo fmt --all -- --check",
+        "lint": "cargo clippy --all-targets -- -D warnings",
+        "build": "cargo build",
+        "test": "cargo test --all"
+      },
+      "surfaceTiers": {
+        "elevated": ["crates/**", "migrations/**"]
+      },
+      "contractPin": { "dep": "your-org-shared", "version": "v1" }
+    },
+    {
+      "name": "web",
+      "url": "https://github.com/your-org/web",
+      "defaultBranch": "main",
+      "kind": "node",
+      "gates": ["install", "lint", "typecheck", "build", "test"],
+      "services": ["postgres"],
+      "commands": {
+        "install": "pnpm install",
+        "lint": "pnpm lint",
+        "typecheck": "npx tsc --noEmit",
+        "build": "pnpm build",
+        "test": "pnpm test"
+      },
+      "surfaceTiers": {
+        "elevated": ["src/**", "migrations/**"]
+      },
+      "contractPin": { "dep": "@your-org/shared", "version": "v1" }
+    }
+  ],
+  "merge": { "mode": "queue", "max": 4 }
+}

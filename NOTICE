@@ -1,0 +1,20 @@
+jeyd-engineering-os
+Copyright (c) 2026 Yadheedhya06 (jeyd)
+
+The authored skills in this repository — skills/orchestrate, skills/worker,
+and skills/redteam — are original work licensed under the MIT License
+(see LICENSE).
+
+This project REFERENCES — but does NOT vendor, copy, or redistribute — the
+following third-party Claude Code marketplace skills/plugins. No third-party
+source code is included in this repository; they are linked and annotated only
+(see SKILLS-I-USE.md). Each remains the property of its respective authors
+under its own license (Apache-2.0), as published in the official marketplace
+anthropics/claude-plugins-official:
+
+  - superpowers       https://github.com/anthropics/claude-plugins-official
+  - code-review       https://github.com/anthropics/claude-plugins-official/tree/main/plugins/code-review
+  - ralph-loop        https://github.com/anthropics/claude-plugins-official/tree/main/plugins/ralph-loop
+  - rust-analyzer-lsp https://github.com/anthropics/claude-plugins-official
+
+Trademarks and product names are the property of their respective owners.

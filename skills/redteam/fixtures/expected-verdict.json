@@ -1,0 +1,8 @@
+{
+  "decisions": [
+    { "id": "D1", "verdict": "cleared", "refuted": 0, "total": 3, "surface": "standard", "severity": "low" },
+    { "id": "D2", "verdict": "blocked", "refuted": 1, "total": 5, "surface": "elevated", "severity": "critical" }
+  ],
+  "summary": { "cleared": 1, "revise": 0, "blocked": 1 },
+  "gate": "fail"
+}
