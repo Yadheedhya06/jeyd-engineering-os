@@ -12,6 +12,7 @@ The skills are the artifact. The repo is the statement.
 - ★ **authored** (full MIT source, here): [`orchestrate`](skills/orchestrate), [`worker`](skills/worker), [`redteam`](skills/redteam)
 - ☆ **marketplace** (referenced + annotated): [`SKILLS-I-USE.md`](SKILLS-I-USE.md)
 - ⚡ **[Power-User Playbook](#power-user-playbook--running-the-dev-cycle-at-max)** — run the whole cycle at MAX
+- 🎛 **[CLI UX](cli-ux)** — the cockpit: my statusline + the terminal settings I actually run
 
 ## Install
 
@@ -60,6 +61,13 @@ Every skill maps to a phase. ★ = authored here, ☆ = marketplace (see [`SKILL
 
 ### 7. Language tooling
 - ☆ `rust-analyzer-lsp` — real LSP for the Rust repos.
+
+## CLI UX — the cockpit
+
+Skills are the engine; [`cli-ux/`](cli-ux) is the instrument panel. A self-contained two-row
+statusline (model · dir · branch · dirty counts, then a color-thresholded context-window bar +
+live cost + session clock) and the `settings.json` keys behind the setup: 1M context, `xhigh`
+effort, fullscreen TUI, daltonized theme. One bash script + jq, no plugins.
 
 ## Principles
 
