@@ -9,7 +9,7 @@ parts that are mine.
 
 The skills are the artifact. The repo is the statement.
 
-- ★ **authored** (full MIT source, here): [`orchestrate`](skills/orchestrate), [`worker`](skills/worker), [`redteam`](skills/redteam)
+- ★ **authored** (full MIT source, here): [`orchestrate`](skills/orchestrate), [`worker`](skills/worker), [`redteam`](skills/redteam), [`codex-first`](skills/codex-first)
 - ☆ **marketplace** (referenced + annotated): [`SKILLS-I-USE.md`](SKILLS-I-USE.md)
 - ⚡ **[Power-User Playbook](#power-user-playbook--running-the-dev-cycle-at-max)** — run the whole cycle at MAX
 - 🎛 **[CLI UX](cli-ux)** — the cockpit: my statusline + the terminal settings I actually run
@@ -39,6 +39,7 @@ Every skill maps to a phase. ★ = authored here, ☆ = marketplace (see [`SKILL
 - ☆ `superpowers:writing-plans` — turn the approved design into a step-by-step plan.
 
 ### 2. Implement
+- ★ `codex-first` — the two-model split: Claude (Fable 5) designs/specs/reviews, Codex CLI (GPT-5.5 @ xhigh) writes the code. See the [playbook section](#3-codex-first--the-two-model-division-of-labor) and the [full setup guide](skills/codex-first/references/setup.md).
 - ☆ `superpowers:test-driven-development` — red → green → refactor, always.
 - ☆ `superpowers:subagent-driven-development` — execute independent plan tasks as parallel subagents.
 
@@ -89,7 +90,7 @@ Run the cycle deliberately, one trigger per stage:
 |---|-------|---------|---------------|
 | 1 | Design | `superpowers:brainstorming` | agreed design + **approval gate** |
 | 2 | Plan | `superpowers:writing-plans` | `docs/plans/<feature>.md` |
-| 3 | Build | `superpowers:test-driven-development` | red → green → refactor |
+| 3 | Build | ★ `codex-first` + `superpowers:test-driven-development` | Codex types from the frozen spec; red → green → refactor |
 | 4 | Verify | `verify` + `superpowers:verification-before-completion` | observed behavior + evidence |
 | 5 | Review | `code-review` + ★ `redteam` | zero high/critical + **GATE: pass** |
 | 6 | Ship | ★ `orchestrate` autonomous merge | squash-merged behind the gauntlet |
@@ -135,14 +136,40 @@ A PR is **ELIGIBLE to merge** iff: label `redteam-clear` (and **not** `redteam-b
 (≥1 success, zero non-success) **AND** base ≠ the repo's default branch **AND** GitHub reports it MERGEABLE.
 Anything else is skipped, not forced.
 
-### 3. Parallelism / ultracode — when to fan out
+### 3. Codex-first — the two-model division of labor
+
+The cost hack that funds everything else: **Claude drives, Codex types.** Claude Code (running
+**Claude Fable 5**, `claude-fable-5` — the metered, judgment-heavy model) does design, spec-writing,
+diff review, verification, and every git/GitHub mutation. **Codex CLI** (`npm i -g @openai/codex`,
+running **GPT-5.5 at `xhigh` reasoning effort**, flat-rate under a ChatGPT Plus subscription) does the
+actual code generation. Metered tokens buy judgment; flat-rate tokens buy keystrokes.
+
+The flow per task:
+
+1. **Claude freezes a spec** — goal, repo + exact paths, constraints, non-goals, the proof command expected. Codex has zero session context; the spec is everything.
+2. **Codex implements**: `codex exec --dangerously-bypass-approvals-and-sandbox -C <repo> -o /tmp/codex-last.md - < spec` — full autonomy inside the repo, result read from the `-o` file.
+3. **Claude reviews the real diff** like a contributor PR, runs the tests itself, iterates via `codex exec resume --last`. Two failed rounds → Claude takes over and writes it directly.
+4. **Merges/pushes are Claude-only, ever.** Codex never touches git remotes or GitHub.
+
+What stays in Claude regardless: design/architecture, tiny edits (<20 lines), anything needing
+session tools (MCP, secrets), all code/security review, all merges. Routing heuristic: *a prompt
+that reads like a work order → delegate; a prompt whose writing forces decisions → design, keep it.*
+
+Setup to replicate (models, `~/.codex/config.toml`, the global `CLAUDE.md` wiring block):
+[`skills/codex-first/references/setup.md`](skills/codex-first/references/setup.md). The skill itself:
+[`skills/codex-first`](skills/codex-first).
+
+This composes with the loop below: `codex-first` only changes *who types* in the Implement phase —
+the gauntlet, redteam gate, and merge rules are unchanged and don't care who wrote the code.
+
+### 4. Parallelism / ultracode — when to fan out
 
 - **Independent bundles → parallel.** The loop's `--max N` runs N workers at once. Raise it when bundles are truly independent (different files/modules); keep it low when they fight over shared files.
 - **Independent plan tasks → subagents.** Use `superpowers:dispatching-parallel-agents` / `subagent-driven-development` to fan out plan steps that share no state. Workflow orchestration drives the loop's coordinators (planner, interrogate, merger) the same way.
 - **Hard single change → ultracode.** Bump `--effort xhigh` for the gnarliest bundle; the planner / redteam / merger coordinators already run at ultracode.
 - **Rule of thumb:** parallel beats serial only when the work is *independent and the merge is queued*. Shared-file work, or anything touching a real-money / safety surface → serialize it (`--max 1` or `merge.mode: "queue"`): correctness over throughput.
 
-### 4. Guardrails make autonomy safe (why you can leave it running)
+### 5. Guardrails make autonomy safe (why you can leave it running)
 
 Nothing merges green-by-default. Before **every** merge, two fail-closed gates run:
 
@@ -153,16 +180,17 @@ Kill switch: `touch "$WORK_DIR/.orchestrate/PAUSE"` (default: a sibling `.orches
 checkout) — the loop kills running agents and stops fanning out new work. Fail-closed gauntlet + adversarial
 gate + a kill switch is exactly what lets you walk away.
 
-### 5. Long-running / iterate-until-done
+### 6. Long-running / iterate-until-done
 
 - ☆ `ralph-loop` — grind one stubborn task (a flaky fix, a big refactor) to completion across many turns without re-prompting.
 - `/loop <interval> <command>` — run a command/skill on a recurring interval (e.g. `/loop 5m /babysit-prs`).
 - `/schedule` — cron'd cloud runs (e.g. drain the backlog every night, then push a summary).
 
-### 6. Setup-for-MAX checklist
+### 7. Setup-for-MAX checklist
 
 - [ ] **Install** the authored skills: `/plugin marketplace add Yadheedhya06/jeyd-engineering-os` → `/plugin install`, or `./install.sh`.
 - [ ] **Install** the marketplace skills from [`SKILLS-I-USE.md`](SKILLS-I-USE.md).
+- [ ] **Wire codex-first** (optional but the cost unlock): ChatGPT Plus + `npm i -g @openai/codex` + `codex login`, set `~/.codex/config.toml` to `gpt-5.5` / `xhigh`, and paste the delegation block into your global `~/.claude/CLAUDE.md` — full walkthrough in [`skills/codex-first/references/setup.md`](skills/codex-first/references/setup.md).
 - [ ] **Write `repos.json`** — copy [`examples/demo/repos.json`](examples/demo/repos.json), set `name` / `url` / `defaultBranch`, your `gates` / `services`, `surfaceTiers.elevated` globs, `contractPin` (or `null`), and the `merge` block.
 - [ ] **Export env-only tokens:** `GH_WORKER_TOKEN` (repo-scoped) and `CONTRACTS_TOKEN` if you pin a cross-repo dep. Never put values in the repo.
 - [ ] **Set `REPOS_JSON`** to the path of your `repos.json` (e.g. `export REPOS_JSON="$PWD/examples/demo/repos.json"`).
@@ -170,7 +198,7 @@ gate + a kill switch is exactly what lets you walk away.
 - [ ] **Dry-run once** (`skills/orchestrate/bin/run.sh <repo-key>` — no `--go`), read the plan + status table, then add `--go`.
 - [ ] **Pick effort:** `high` for most loops; `xhigh` when you need it.
 
-### 7. Anti-patterns (what kills the gains)
+### 8. Anti-patterns (what kills the gains)
 
 | Anti-pattern | Why it hurts | The fix |
 |--------------|--------------|---------|
@@ -180,3 +208,5 @@ gate + a kill switch is exactly what lets you walk away.
 | Vendoring a marketplace skill instead of configuring | Stale copy, license drift, lost updates | Reference it ([`SKILLS-I-USE.md`](SKILLS-I-USE.md)); configure the engine via `repos.json`. |
 | `--max` too high on shared-file bundles | Merge conflicts + races | Lower `--max` or use `merge.mode: "queue"`; parallel only when independent. |
 | Running `--go` blind | Surprises in a live repo | Dry-run first (no `--go`), read the status table, then go live. |
+| Shipping a Codex diff unreviewed | Flat-rate code, metered consequences | Claude reads the full diff like a contributor PR + runs the tests itself — Codex claims are advisory. |
+| Delegating design or tiny edits to Codex | Spec-writing IS the decision-making; <20-line edits lose to delegation overhead | Route by the heuristic: work order → Codex; forces decisions → Claude. |

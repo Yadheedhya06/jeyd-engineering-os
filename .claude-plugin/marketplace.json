@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "engineering-os",
-      "description": "Authored engineering-lifecycle skills: orchestrate (autonomous dev-team loop), worker (TDD + fail-closed gauntlet), redteam (adversarial merge gate).",
+      "description": "Authored engineering-lifecycle skills: orchestrate (autonomous dev-team loop), worker (TDD + fail-closed gauntlet), redteam (adversarial merge gate), codex-first (Claude drives, Codex implements).",
       "author": {
         "name": "Yadheedhya06 (jeyd)",
         "email": "yadheedhya6@gmail.com"

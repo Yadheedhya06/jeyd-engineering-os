@@ -1,7 +1,7 @@
 {
   "name": "engineering-os",
   "version": "0.1.0",
-  "description": "Authored engineering-lifecycle skills: orchestrate (autonomous dev-team loop), worker (TDD + fail-closed gauntlet), redteam (adversarial merge gate). Skills are auto-discovered from ./skills.",
+  "description": "Authored engineering-lifecycle skills: orchestrate (autonomous dev-team loop), worker (TDD + fail-closed gauntlet), redteam (adversarial merge gate), codex-first (Claude drives, Codex implements). Skills are auto-discovered from ./skills.",
   "author": {
     "name": "Yadheedhya06 (jeyd)",
     "email": "yadheedhya6@gmail.com"
