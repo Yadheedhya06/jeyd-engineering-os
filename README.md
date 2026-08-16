@@ -13,6 +13,7 @@ The skills are the artifact. The repo is the statement.
 - ☆ **marketplace** (referenced + annotated): [`SKILLS-I-USE.md`](SKILLS-I-USE.md)
 - ⚡ **[Power-User Playbook](#power-user-playbook--running-the-dev-cycle-at-max)** — run the whole cycle at MAX
 - 🎛 **[CLI UX](cli-ux)** — the cockpit: my statusline + the terminal settings I actually run
+- 🛰 **[My AI agency runtime](docs/ai-agency-runtime.md)** — the researched, live server harness behind long-running project maintenance, monitoring, gated deployment, and rollback
 
 ## Install
 
@@ -69,6 +70,17 @@ Skills are the engine; [`cli-ux/`](cli-ux) is the instrument panel. A self-conta
 statusline (model · dir · branch · dirty counts, then a color-thresholded context-window bar +
 live cost + session clock) and the `settings.json` keys behind the setup: 1M context, `xhigh`
 effort, fullscreen TUI, daltonized theme. One bash script + jq, no plugins.
+
+## The server behind the workflow
+
+The skills in this repo describe how I build. I also run a persistent server-side harness
+for what happens after the terminal session: task intake, isolated Codex worktrees, independent
+review, deterministic CI, human-approved immutable deployments, observability, backups, and
+rollback.
+
+I documented the research, the authority boundaries, the exact system currently running, the
+failure that exposed a false-green monitoring check, and the remaining path to safe autonomous
+operations in **[My AI agency runtime](docs/ai-agency-runtime.md)**.
 
 ## Principles
 
